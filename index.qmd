@@ -1,0 +1,40 @@
+---
+title: "Interaktive Presentationen"
+subtitle: "mit Quarto, Reveal.js, SVG.js und flask"
+format: 
+  revealjs: 
+    controls: true
+    smaller: true
+    slide-number: true
+    chalkboard: 
+      buttons: false
+    preview-links: auto
+    logo: images/Logo_PH_Bern.png
+    footer: Dr. Wolfgang Spahn
+    css: [styles.css, custom-styles.css]  # Include your custom CSS file here
+    include-in-header: includes.html
+resources:
+  - interaktive.pdf
+---
+
+## IP und Socket
+
+<div type="showIPSocket" id="ip-socket" class="centered-xxl-text"></div>
+
+## Buttons
+
+<button onclick="goFullScreen()" class="centered-xxl-rounded-button">Fullscreen</button>
+
+## Setup your team
+
+<div type="teamCollection" id="team-collection"></div>
+
+## Collect input
+
+<div type="inputField" id="inputField1"></div>
+<div type="inputCollection" ref="inputField1" argConfig='{ "width": 500, "height": 300, "hidden": true }'></div>
+
+## Collect polls
+
+<div type="pollField" id="pollField1"></div>
+<div type="pollPercentage" ref="pollField1"></div>

@@ -1,0 +1,31 @@
+# Ignore all log files
+*.log
+
+# Ignore system files
+.DS_Store
+Thumbs.db
+
+# Environment variables - PASSWORDS, API KEYS, etc
+.env
+
+# -------------------------------------------------------- Quarto presentation
+
+# Ignore Quarto temporary files
+.quarto-cache/
+.quarto-work/
+/.quarto/
+
+# Ignore Quarto output files
+docs/
+
+# -------------------------------------------------------- Javascript frontend
+
+# Dependency directories
+node_modules/
+
+# Output directories
+dist/
+build/
+
+## -------------------------------------------------------- Python backend
+/backend/.venv/

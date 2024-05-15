@@ -1,0 +1,97 @@
+/* Increase specificity by specifying a more detailed selector */
+body .reveal .slides > h1 {
+    color: #ba1313;
+}
+
+.small {
+    font-size: 0.6em;
+}
+
+.reveal h1 {
+    /*thin typewriter font*/
+    font-family: 'Courier New', Courier, monospace;
+    font-size:larger;
+    /*medium weight*/
+    font-weight:100;
+}
+
+.reveal h2 {
+    font-family: 'Courier New', Courier, monospace;
+    margin-bottom: 40px; /* Adjust the value as needed */
+    color: #ba1313; /* Change the color value as needed */
+    font-weight: 600; /* Adjust the value as needed */
+}
+
+.reveal h3 {
+    color: #ba1313; /* Change the color value as needed */
+}
+
+.clickable {
+    cursor: pointer;
+}
+
+figure .grayfigure {
+    background-color: gray;
+    display: block;
+    margin: 0 auto;
+    text-align: center;
+}
+
+/* figcaption {
+    font-size: 0.8em;
+    text-align: center;
+} */
+
+.gray-border {
+    border: 2px solid gray;
+    padding: 10px;
+}
+
+/* Toast Container */
+.toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+}
+
+/* Toast Message */
+.toast-message {
+    background-color: #333;
+    color: white;
+    padding: 16px;
+    margin-top: 5px;
+    border-radius: 5px;
+    opacity: 0;
+    transition: opacity 0.5s;
+}
+
+/* Make the toast message visible */
+.toast-show {
+    opacity: 1;
+    transition: opacity 0.5s;
+}
+
+.centered-xxl-text {
+    font-size: 64px;
+    text-align: center;
+    font-weight: bold;
+  }
+
+.centered-xxl-rounded-button {
+    font-size: 64px;
+    text-align: center;
+    font-weight: bold;
+    border-radius: 12px;
+    padding: 12px;
+    background-color: #444;
+    color: white;
+    display: block; 
+    margin-left: auto; 
+    margin-right: auto;
+    cursor: pointer;
+  }
+
+  table {
+   font-size: large
+  }
