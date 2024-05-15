@@ -81,7 +81,8 @@ export function rectWithText(draw, x, y, width, height, textFn, argConfig) {
 
 
 // Function to measure text width without rendering it visibly
-function measureTextWidth_(draw,text, fontFamily, fontSize) {
+// Does not know as we need to make it async to assure the text is rendered bofore measuring it
+function measureTextWidth(draw,text, fontFamily, fontSize) {
     console.log('measureTextWidth:', text, fontFamily, fontSize);
     // Create text element off-screen
     const textElement = draw.text(text).move(-1000, -1000).font({ family: fontFamily, size: fontSize });
@@ -106,6 +107,8 @@ function estimateTextWidth(draw, text, fontFamily, fontSize) {
     console.log('estimateTextWidth:', text, fontSize, estimatedWidth);
     return estimatedWidth;
 }
+
+///////////////////////////////////////////// BOARD FUNCTIONS ///////////////////////////////////////
 
 export function postIt(draw, text, x, y, maxWidth=100, lineHeight=18, maxHeight=50) {
     console.log('postIt:', text, x, y, maxWidth, lineHeight, maxHeight);
@@ -160,6 +163,7 @@ export function postIt(draw, text, x, y, maxWidth=100, lineHeight=18, maxHeight=
     // Make the group draggable
     group.draggable();
 }
+
 
 export function createBoardD3(draw, texts, boardWidth, boardHeight) {
     // assert texts is an array and not empty of an array of arrays
