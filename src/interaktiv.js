@@ -17,6 +17,11 @@ export function runFunction(fun) {
 
 /////////////////////////////////////////////////////////////////////////////////////
 
+// create an EventSource object for the server-sent events
+export const eventSource = new EventSource('events');
+
+/////////////////////////////////////////////////////////////////////////////////////
+
 export async function showIPSocket(ipSocketElement) {
     const ipSocket = await getIPSocket();
     ipSocketElement.innerHTML = `http://${ipSocket.ip}:${ipSocket.socketNr}/`;

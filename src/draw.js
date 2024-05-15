@@ -81,7 +81,8 @@ export function rectWithText(draw, x, y, width, height, textFn, argConfig) {
 
 
 // Function to measure text width without rendering it visibly
-function measureTextWidth(draw,text, fontFamily, fontSize) {
+function measureTextWidth_(draw,text, fontFamily, fontSize) {
+    console.log('measureTextWidth:', text, fontFamily, fontSize);
     // Create text element off-screen
     const textElement = draw.text(text).move(-1000, -1000).font({ family: fontFamily, size: fontSize });
 
@@ -90,8 +91,20 @@ function measureTextWidth(draw,text, fontFamily, fontSize) {
 
     // Remove the text element after measurement
     textElement.remove();
+    console.log('- textWidth:', textWidth);
 
     return textWidth;
+}
+
+function estimateTextWidth(draw, text, fontFamily, fontSize) {
+    // Average width of a character relative to the font size
+    const averageCharWidthFactor = 0.5; // Adjust this factor as needed
+
+    // Estimate the text width
+    const estimatedWidth = text.length * fontSize * averageCharWidthFactor;
+
+    console.log('estimateTextWidth:', text, fontSize, estimatedWidth);
+    return estimatedWidth;
 }
 
 export function postIt(draw, text, x, y, maxWidth=100, lineHeight=18, maxHeight=50) {
@@ -112,10 +125,11 @@ export function postIt(draw, text, x, y, maxWidth=100, lineHeight=18, maxHeight=
     let line = '';
     let height = topMargin*3;
     words.forEach(function(word) {
+        console.log('- - word:', word);
         const testLine = line + word + ' ';
         // get the width of the text without rendering it
-        const testWidth = measureTextWidth(draw, testLine, 'Arial', size);
-        // console.log(testWidth, testLine, line, height, maxWidth);
+        const testWidth = estimateTextWidth(draw, testLine, 'Arial', size);
+        console.log("- - - ",testWidth, testLine, line, height, maxWidth);
         // If the line is too long, wrap the text
         if (testWidth > maxWidth) {
             lines.push({text: line});
@@ -163,7 +177,7 @@ export function createBoardD3(draw, texts, boardWidth, boardHeight) {
 
     console.log('nodes:', nodes);
 
-    draw.rect(boardWidth, boardHeight).fill('white').stroke({ color: '#333', width: 2 });
+
 
     const simulation = d3.forceSimulation(nodes)
         .force('x', d3.forceX(d => d.x).strength(0.5))
@@ -177,6 +191,8 @@ export function createBoardD3(draw, texts, boardWidth, boardHeight) {
         console.log('Creating post-it:', node.text, node.x, node.y);
         postIt(draw, node.text, node.x, node.y, 110, 18);
     });
+
+    draw.rect(boardWidth, boardHeight).fill('none').stroke({ color: '#333', width: 2 });
 }
 
 

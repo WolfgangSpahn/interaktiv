@@ -3,6 +3,8 @@ title: "Interaktive Presentationen"
 subtitle: "mit Quarto, Reveal.js, SVG.js und flask"
 format: 
   revealjs: 
+    config:
+      touch: false
     controls: true
     smaller: true
     slide-number: true
@@ -32,9 +34,9 @@ resources:
 ## Collect input
 
 <div type="inputField" id="inputField1"></div>
-<div type="inputCollection" ref="inputField1" argConfig='{ "width": 500, "height": 300, "hidden": true }'></div>
+<div type="inputCollection" ref="inputField1" argConfig='{ "width": 500, "height": 300, "hidden": false }'></div>
 
 ## Collect polls
 
 <div type="pollField" id="pollField1"></div>
-<div type="pollPercentage" ref="pollField1"></div>
+<div type="pollPercentage" ref="pollField1" class="centered-xxl-text"></div>
