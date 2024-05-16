@@ -1,23 +1,49 @@
+# system python interpreter. used only to create virtual environment
+PY = python3
+BIN=.venv/bin
+
+# make it work on windows too
+ifeq ($(OS), Windows_NT)
+    BIN=.venv/Scripts
+    PY=python
+endif
+
 help:      ## Show this help.
 	@fgrep -h "##" $(MAKEFILE_LIST) | fgrep -v fgrep | sed -e "s/\\$$//" | sed -e "s/##//"
 
-venv:      ## Install the project.
-	python -m venv .venv
+.venv:     ## setup the environment
+.venv: requirements.txt requirements-dev.txt setup.py
+	$(PY) -m venv .venv
+	$(BIN)/pip install --upgrade -r requirements.txt
+	$(BIN)/pip install --upgrade -r requirements-dev.txt
+	$(BIN)/pip install -e .
+	touch .venv
 
-install:   ## do install
-	python -m pip install -r .\requirements.txt
+.PHONY: test
+test:      ## run pytest
+test: .venv
+	$(BIN)/pytest
 
-check_venv:
-	@python -c "import sys; sys.exit(0) if sys.prefix != sys.base_prefix else sys.exit(1)" || (echo 'Please activate your virtual environment.' && exit 1)
+.PHONY: lint
+lint:      ## run flake8
+lint: .venv
+	$(BIN)/flake8
 
-activate:  ## Instructions to activate the virtual environment.
-	@echo To activate the virtual environment, run:
-	@echo For Command Prompt: .venv\Scripts\activate
-	@echo For PowerShell: .venv\Scripts\Activate.ps1
-	@echo for Bash: . .venv\bin\activate
+.PHONY: release
+release:   ## release package to PyPI
+release: .venv
+	$(BIN)/python setup.py sdist bdist_wheel
+	$(BIN)/twine upload dist/*
 
-run: check_venv ## Run the server.
-	python server.py
 
-test:      ## Run the tests.
-	python stress_tests.py
+.PHONY: run
+run:       ## runs entry point
+run: .venv
+	$(BIN)/python interaktiv_server/server.py
+
+clean:     ## clean up
+	rm -rf .venv
+	rm -rf interaktiv_server.egg-info 
+	find . -type f -name '*~' -delete
+	find . -type f -name '*.pyc' -delete
+	find . -type d -name '__pycache__' -delete

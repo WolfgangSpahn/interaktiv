@@ -18,6 +18,7 @@ import socket
 nicknames = {}
 likertScores = {}
 socketNr = 5050
+docs_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../docs'))
 
 # -------------------------------------------------- Setup logging
 
@@ -27,6 +28,11 @@ logger = logging.getLogger(__name__)
 logging.getLogger("werkzeug").setLevel(logging.ERROR)
 
 # -------------------------------------------------- Helper functions
+# Check if the docs_dir exists
+if not os.path.exists(docs_dir):
+    logger.error(f"Directory does not exist: {docs_dir}")
+    abort(404, description="Resource not found")
+print(f" * Great, found presentation under: {docs_dir}")
 
 def get_ip():
     """
@@ -69,14 +75,14 @@ sse_manager = setup_sse_listen(app) # Setup SSE listening route
 
 # -------------------------------------------------- Event routes
 # test with
-# curl -X GET http://localhost:5000/events
+# curl -X GET http://localhost:5050/events
 @app.route('/events')
 def events():
     """SSE endpoint for both pings and name changes."""
     return Response(stream(sse_manager), mimetype='text/event-stream')
 
 # test with
-# curl -X GET http://localhost:5000/ping
+# curl -X GET http://localhost:5050/ping
 # ping is disabled
 @app.route('/ping', methods=['GET'])
 def ping():
@@ -87,7 +93,7 @@ def ping():
 ## ------------------------------------------------- Nickname routes
 
 # test with 
-# curl -X POST -H "Content-Type: application/json" -d '{"name":"Hund", "uuid":"123"}' http://localhost:5000/nickname
+# curl -X POST -H "Content-Type: application/json" -d '{"name":"Hund", "uuid":"123"}' http://localhost:5050/nickname
 @app.route('/nickname', methods=['POST'])
 def post_icon_name():
     """Receive a JSON object with a name field."""
@@ -100,7 +106,7 @@ def post_icon_name():
     return jsonify({'status': 'success', 'message': 'Data received'}), 200
 
 # test with
-# curl -X GET http://localhost:5000/nickname/123
+# curl -X GET http://localhost:5050/nickname/123
 @app.route('/nickname/<uuid>', methods=['GET'])
 def get_icon_name(uuid):
     """Return the nickname for the given uuid or None."""
@@ -111,7 +117,7 @@ def get_icon_name(uuid):
         return jsonify({'nickname': name}), 200
 
 # test with
-# curl -X GET http://localhost:5000/nicknames
+# curl -X GET http://localhost:5050/nicknames
 @app.route('/nicknames', methods=['GET'])
 def get_icon_names():
     """Return the list of nicknames."""
@@ -119,7 +125,7 @@ def get_icon_names():
 
 # --------------------------------------------------- Likert scale routes
 # test with
-# curl -X POST -H "Content-Type: application/json" -d '{"likert":3}' http://localhost:5000/likert
+# curl -X POST -H "Content-Type: application/json" -d '{"likert":3}' http://localhost:5050/likert
 @app.route('/likert', methods=['POST'])
 def post_likert():
     """Receive a JSON object with a likert field."""
@@ -136,14 +142,14 @@ def post_likert():
     return jsonify({'status': 'success', 'message': f'Data received for key {data["likert"]}'}), 200
 
 # test with
-# curl -X GET http://localhost:5000/likert
+# curl -X GET http://localhost:5050/likert
 @app.route('/likerts', methods=['GET'])
 def get_likert():
     """Return the list of likert scores."""
     return jsonify({'likert': likertScores}), 200
 
 # get the likert score for all users and ONE likert id in percentage with 0:100%, 1:75%, 2:50%, 3:25%, 4:0%
-# curl -X GET http://localhost:5000/likert/scale1
+# curl -X GET http://localhost:5050/likert/scale1
 @app.route('/likert/<likert_id>', methods=['GET'])
 def get_likert_scale(likert_id):
     contribution = {"0":1, "1":0.75, "2":0.5, "3":0.25, "4":0}
@@ -166,7 +172,7 @@ def calcLikertPercentage(likertScores):
 # ==================================================================== Answer routes
 answers = {}
 # post an answer identified by a uuid
-# curl -X POST -H "Content-Type: application/json" -d '{"answer":"yes", "qid":"inputField1", "uuid":"123"}' http://localhost:5000/answer
+# curl -X POST -H "Content-Type: application/json" -d '{"answer":"yes", "qid":"inputField1", "uuid":"123"}' http://localhost:5050/answer
 @app.route('/answer', methods=['POST'])
 def post_answer():
     """Receive a JSON object with a answer field."""
@@ -189,7 +195,7 @@ def post_answer():
     notify_subscribers(sse_manager, {"qid":qid,"answers": list(answers[qid].values())}, f'A-{qid}')  # Notify subscribers with the new name
     return jsonify({'status': 'success', 'message': 'Data received'}), 200
 # geat all answers for a question without the uuid
-# curl -X GET http://localhost:5000/answer/inputField1
+# curl -X GET http://localhost:5050/answer/inputField1
 @app.route('/answer/<qid>', methods=['GET'])
 def get_answer(qid):
     """Return the list of answers for a question."""
@@ -199,7 +205,7 @@ def get_answer(qid):
         return jsonify({'answers': list(answers[qid].values())}), 200
 
 # get just all answers
-# curl -X GET http://localhost:5000/answers
+# curl -X GET http://localhost:5050/answers
 @app.route('/answers', methods=['GET'])
 def get_answers():
     """Return the list of answers for all questions."""
@@ -208,7 +214,7 @@ def get_answers():
 
 # --------------------------------------------------- Monitoring routes
 # test with
-# curl -X GET http://localhost:5000/threads
+# curl -X GET http://localhost:5050/threads
 @app.route('/threads')
 def home():
     """Give feadback about the running threads."""
@@ -219,7 +225,7 @@ def home():
     return f'Active threads:\n - {thread_info} \n => {message}'
 
 # test with
-# curl -X GET http://localhost:5000/monitor
+# curl -X GET http://localhost:5050/monitor
 @app.route('/monitor')
 def monitor():
     """Get the CPU and memory usage of the SSE server process."""
@@ -230,30 +236,30 @@ def monitor():
     return jsonify(metrics)
 
 # test with
-# curl -X GET http://localhost:5000/ipsocket
+# curl -X GET http://localhost:5050/ipsocket
 @app.route('/ipsocket')
 def ipsocket():
     """Get the IP address and port number of the current machine."""
     return jsonify({"ip": get_ip(), "socketNr": socketNr})
 
 # --------------------------------------------------- Static routes
-# start in the browser with http://localhost:5000/
+# start in the browser with http://localhost:5050/
 # to serve the frontend application
 @app.route('/')
 def serve_frontend():
     user_agent = request.headers.get('User-Agent')
     logger.info(f"User-Agent: {user_agent}")
-    return send_from_directory("../docs", "index.html") # type: ignore
+    return send_from_directory(docs_dir, "index.html") # type: ignore
     
 # test with, by getting the favicon
-# curl -X GET http://localhost:5000/favicon.ico
+# curl -X GET http://localhost:5050/favicon.ico
 # to serve all static files (including subdirectory assets)
 @app.route('/<path:filename>')
 def serve_static(filename):
     # logger.info(f"serve_static: {filename} from {app.static_folder}")
     logger.info(f"serve_static: {filename}")
-    return send_from_directory("../docs", filename) # type: ignore
-# http://localhost:5000/images/icons/animal-ant-domestic-svgrepo-com.svg
+    return send_from_directory(docs_dir, filename) # type: ignore
+# http://localhost:5050/images/icons/animal-ant-domestic-svgrepo-com.svg
 
 # --------------------------------------------------- Logging
 @app.before_request
