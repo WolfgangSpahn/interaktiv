@@ -1,44 +1,73 @@
-## Flask Server for interaktive.js
+## Interaktiv.js
 
 ### Overview
 
-This project provides a Flask server designed to facilitate the
-creation of interactive HTML presentations. The front end
-interactiv.js leverages tools like Quarto and Reveal.js, enhanced with
-special HTML `div` tags bound to interactive.js snippets. This server
-collects inputs from all participants and communicate with the server.
+This project provides frontend and backend code to allow the creation
+of interactive HTML presentations. The front end enhances Quarto
+markdown code with special HTML `div` tags bound to interactive.js
+snippets at runtime. This server collects inputs from all participants and
+communicate with the server.
 
 
 
 ### Installation
 
-To install the package, use pip:
+To setup the front end:
+
+```bash
+make init
+make install
+make render
+```
+now you should have docs directory, which is served by the backend.
+
+To setup the backend
+
+```bash
+cd backend
+make .venv
+```
+
+### Render your enhanced Quarto presentation
+
+As usual you render your quarto presentation with `quarto rende <your file.qmd>` our you can use
 
 ```sh
-pip install interactiv-server
+make render
+```
+
+Have a look into index.qmd for an quarto presentation, enhanced with interaktive elements.
+
+```markdown
+## Collect input
+
+What additional feature do you need:
+
+<div type="inputField" id="inputField1"></div>
+<div type="inputCollection" ref="inputField1" argConfig='{ "width": 500, "height": 300, "hidden": false }'></div>
+
+## Collect polls
+
+I like Quarto interaktiv:
+
+<div type="pollField" id="pollField1"></div>
+<div type="pollPercentage" ref="pollField1" class="centered-xxl-text"></div>
 ```
 
 ### Usage
 
-Here's a basic example of how to use this Flask server add-on to
-generate an interactive HTML presentation:
+To start the server which will serve the presentation, holds
+participants nicknames and collect the interaktive inputs.
 
-1. **Setup environment and install requirements**:
-    ```bash
-	make .venv
-    ```
 
-2. **Create a Quarto file**: Use Quarto to create a `.qmd` file with
-   your presentation content, enhanced with interactive elements. Have
-   a look into interaktiv.js for an example.
+**Run your Flask app**:
+```bash
+cd backend
+make run
+```
 
-3. **Run your Flask app**:
-    ```sh
-    make run
-    ```
-
-Navigate to `http://localhost:5050` to view and interact with your
-presentation.
+Navigate to `http://<local IP>:5050` to view and interact with your
+presentation. As your participants to do the same.
 
 
 ### Contributions

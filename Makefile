@@ -1,3 +1,9 @@
+# Include .env file if it exists
+ifneq (,$(wildcard ./.env))
+    include .env
+    export
+endif
+
 help:           ## Show this help.
 	@fgrep -h "##" $(MAKEFILE_LIST) | fgrep -v fgrep | sed -e "s/\\$$//" | sed -e "s/##//"
 
@@ -28,7 +34,17 @@ images:         ## copy images to the docs folder
 serve:          ## Serves the project
 	cd backend && make run
 
-clean:
+clean:          ## clean up
+	rm -rf docs
 	rm -rf node_modules
 	find . -type f -name '*~' -delete
 	cd backend && make clean
+
+push:           ## push to github
+	git push origin main
+
+ssh_key: 	## make NEW ssh key
+	ssh-keygen -t rsa -b 4096 -C "wolfgang.spahn@gmail.com"
+
+ssh_gh_test:	## test github connection
+	ssh -T git@github.com
