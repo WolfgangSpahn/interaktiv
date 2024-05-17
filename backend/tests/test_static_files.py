@@ -1,11 +1,10 @@
 import pytest
-import os
 import sys
 
 from os.path import dirname, join, abspath
 
 from app.app import app  
-import requests
+
 
 # Add the root project folder to the python path, so that the tests can import the app
 this_dir = dirname(__file__)

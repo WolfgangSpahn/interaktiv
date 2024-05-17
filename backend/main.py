@@ -11,7 +11,7 @@ from app.utils import get_ip
 logger = logging.getLogger(__name__)
 
 if __name__ == '__main__':
-# --- start the SSE server
+    # --- start the SSE server
     if os.environ.get("WERKZEUG_RUN_MAIN") == "true" or not app.debug:
         logging.warning(f"serve in LAN http://{get_ip()}:{socketNr}")
         # process event to synchronize server startups, wait for SSE server to be ready

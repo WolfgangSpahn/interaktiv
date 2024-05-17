@@ -1,20 +1,20 @@
 # system python interpreter. used only to create virtual environment
-PY = python3
+PY=python3
 BIN=.venv/bin
-RM = rm -rf
+FIND=find
 
 # make it work on windows too
 ifeq ($(OS), Windows_NT)
     BIN=.venv/Scripts
     PY=python
-	RM = rmdir /s /q
+	FIND=gfind
 endif
 
 help:      ## Show this help.
 	@fgrep -h "##" $(MAKEFILE_LIST) | fgrep -v fgrep | sed -e "s/\\$$//" | sed -e "s/##//"
 
 .venv:     ## setup the environment
-.venv: requirements.txt requirements-dev.txt setup.py
+.venv: requirements.txt requirements-dev.txt
 	$(PY) -m venv .venv
 	$(BIN)/pip install --upgrade -r requirements.txt
 	$(BIN)/pip install --upgrade -r requirements-dev.txt
@@ -39,8 +39,9 @@ run: .venv
 
 clean:     ## clean up
 clean:
-	-@rm -r interaktiv_server.egg-info
-	-@ $(RM) -r .venv
-	-@find . -type f -name '*~' -delete
-	-@find . -type f -name '*.pyc' -delete
-	-@find . -type d -name '__pycache__' -delete
+	rm -rf interaktiv_server.egg-info
+	rm -rf .pytest_cache
+	rm -rf .venv
+	$(FIND) . -type f -name '*~' -delete
+	$(FIND) . -type f -name '*.pyc' -delete
+	$(FIND) . -type d -name '__pycache__' -delete

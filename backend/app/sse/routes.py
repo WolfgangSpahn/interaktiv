@@ -60,7 +60,7 @@ def stream(sse_manager):
 def parse_sse_msg(msg):
     try:
         lines = msg.strip('\n').split('\n') 
-        keyVals = [l.split(":") for l in lines]
+        keyVals = [li.split(":") for li in lines]
         keyVals = [(kv[0],kv[1]) for kv in keyVals]
         return dict(keyVals)
     except (IndexError, ValueError) as e:

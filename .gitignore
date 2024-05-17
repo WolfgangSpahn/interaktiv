@@ -29,6 +29,8 @@ build/
 ## -------------------------------------------------------- Python backend
 # virtualenv
 /backend/.venv/
+# build
+/backend/interaktiv_server.egg-info
 # testing
 /backend/.pytest_cache
 # cache, bytecode, etc

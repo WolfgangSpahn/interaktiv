@@ -11,21 +11,21 @@ from app.utils import get_ip, get_process_metrics
 from app.sse.routes import setup_sse_listen, notify_subscribers, stream
 
 
-# -------------------------------------------------- Global vars
+# ---------------------------------------------------------------------------------------------------- Global vars
 
 nicknames = {}
 likertScores = {}
 socketNr = 5050
 docs_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../docs'))
 
-# -------------------------------------------------- Setup logging
+# ---------------------------------------------------------------------------------------------------- Setup logging
 
 format='%(asctime)s - %(name)s/%(lineno)d - %(levelname)s - %(message)s '
 logging.basicConfig(format=format, level=logging.WARNING)
 logger = logging.getLogger(__name__)
 logging.getLogger("werkzeug").setLevel(logging.ERROR)
 
-# -------------------------------------------------- Helper functions
+# ---------------------------------------------------------------------------------------------------- Helper functions
 # Check if the docs_dir exists
 if not os.path.exists(docs_dir):
     logger.error(f"Directory does not exist: {docs_dir}")
@@ -42,7 +42,7 @@ global_pid = None  # Global variable to store the PID of the SSE server process
 sse_manager = setup_sse_listen(app) # Setup SSE listening route
 
 
-# -------------------------------------------------- Event routes
+# ---------------------------------------------------------------------------------------------------- Event routes
 # test with
 # curl -X GET http://localhost:5050/events
 @app.route('/events')
@@ -59,7 +59,7 @@ def ping():
     notify_subscribers(sse_manager,"Pinged", "PING")  # Notify subscribers of the ping event
     return "Pinged"
 
-## ------------------------------------------------- Nickname routes
+# ---------------------------------------------------------------------------------------------------- Nickname routes
 
 # test with 
 # curl -X POST -H "Content-Type: application/json" -d '{"name":"Hund", "uuid":"123"}' http://localhost:5050/nickname
@@ -92,7 +92,7 @@ def get_icon_names():
     """Return the list of nicknames."""
     return jsonify({'nicknames': list(nicknames.values())}), 200
 
-# --------------------------------------------------- Likert scale routes
+# ----------------------------------------------------------------------------------------------------- Likert scale routes
 # test with
 # curl -X POST -H "Content-Type: application/json" -d '{"likert":3}' http://localhost:5050/likert
 @app.route('/likert', methods=['POST'])
@@ -102,7 +102,7 @@ def post_likert():
     if not data or 'likert' not in data:
         return jsonify({'status': 'error', 'message': 'Missing likert'}), 400
     # copy field likert and value to a new dictionary
-    update = {'likert': data['likert'], 'value': data['value']}
+    # update = {'likert': data['likert'], 'value': data['value']}
     
     user = data['user']
     # create or update a nested dictionary with user and likert as keys
@@ -121,7 +121,7 @@ def get_likert():
 # curl -X GET http://localhost:5050/likert/scale1
 @app.route('/likert/<likert_id>', methods=['GET'])
 def get_likert_scale(likert_id):
-    contribution = {"0":1, "1":0.75, "2":0.5, "3":0.25, "4":0}
+    # contribution = {"0":1, "1":0.75, "2":0.5, "3":0.25, "4":0}
     """Return the list of likert scores for a specific likert id."""
     if likert_id not in likertScores:
         return jsonify({'warning': f'No likert scores found for the given likert id: {likert_id}'}), 200
@@ -138,7 +138,7 @@ def calcLikertPercentage(likertScores):
     # average the contributions
     percentage = sum(contribs) / len(contribs) * 100
     return round(percentage)
-# ==================================================================== Answer routes
+# ------------------------------------------------------------------------------------------------------ Answer routes
 answers = {}
 # post an answer identified by a uuid
 # curl -X POST -H "Content-Type: application/json" -d '{"answer":"yes", "qid":"inputField1", "uuid":"123"}' http://localhost:5050/answer
@@ -181,7 +181,7 @@ def get_answers():
     return jsonify({'answers': answers}), 200
 
 
-# --------------------------------------------------- Monitoring routes
+# ----------------------------------------------------------------------------------------------------- Monitoring routes
 # test with
 # curl -X GET http://localhost:5050/threads
 @app.route('/threads')
@@ -211,7 +211,7 @@ def ipsocket():
     """Get the IP address and port number of the current machine."""
     return jsonify({"ip": get_ip(), "socketNr": socketNr})
 
-# --------------------------------------------------- Static routes
+# ----------------------------------------------------------------------------------------------------- Static routes
 # start in the browser with http://localhost:5050/
 # to serve the frontend application
 @app.route('/')
@@ -230,12 +230,9 @@ def serve_static(filename):
     return send_from_directory(docs_dir, filename) # type: ignore
 # http://localhost:5050/images/icons/animal-ant-domestic-svgrepo-com.svg
 
-# --------------------------------------------------- Logging
+# ----------------------------------------------------------------------------------------------------- Logging
 @app.before_request
 def log_request_info():
     # Log method, URL, headers, and body of the request
     client_ip = request.headers.get('X-Forwarded-For', request.remote_addr)
     logger.info(f"Request [{request.method}] {request.url} from {client_ip}")
-
-
-

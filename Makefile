@@ -8,12 +8,12 @@ help:           ## Show this help.
 	@fgrep -h "##" $(MAKEFILE_LIST) | fgrep -v fgrep | sed -e "s/\\$$//" | sed -e "s/##//"
 
 IMG_DIR = docs
-COPY_CMD = cp -r
+FIND=find
 
 # Convert paths to the correct format for Windows
 ifeq ($(OS), Windows_NT)
     IMG_DIR := $(subst /,\\,$(IMG_DIR))
-	COPY_CMD := xcopy /E /I /Y
+	FIND=gfind
 endif
 
 init:          	## Initialize the project.
@@ -40,7 +40,7 @@ serve:          ## Serves the project
 clean:          ## clean up
 	rm -rf docs
 	rm -rf node_modules
-	find . -type f -name '*~' -delete
+	gfind . -type f -name '*~' -delete
 	cd backend && make clean
 
 push:           ## push to github
