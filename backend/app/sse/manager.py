@@ -17,7 +17,7 @@ import logging
 from multiprocessing import Lock
 from multiprocessing.managers import BaseManager
 
-from sse.announcer import MessageAnnouncer
+from .announcer import MessageAnnouncer
 
 logger = logging.getLogger(__name__)
 

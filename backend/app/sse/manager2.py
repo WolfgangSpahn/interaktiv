@@ -17,7 +17,7 @@ import logging
 from multiprocessing import Lock
 from multiprocessing.managers import BaseManager
 
-from sse.announcer import MessageAnnouncer  # Import the module handling the SSE broadcasting.
+from .announcer import MessageAnnouncer  # Import the module handling the SSE broadcasting.
 
 logger = logging.getLogger(__name__)  # Setup logging for this module.
 

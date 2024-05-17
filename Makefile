@@ -7,7 +7,7 @@ endif
 help:           ## Show this help.
 	@fgrep -h "##" $(MAKEFILE_LIST) | fgrep -v fgrep | sed -e "s/\\$$//" | sed -e "s/##//"
 
-IMG_DIR = docs/
+IMG_DIR = docs
 COPY_CMD = cp -r
 
 # Convert paths to the correct format for Windows
@@ -29,7 +29,10 @@ render:	build   ## Render the project.
 	@quarto render index.qmd
 
 images:         ## copy images to the docs folder
-	@$(COPY_CMD) images $(IMG_DIR)
+	cp -r images $(IMG_DIR)
+
+test:		   ## run pytest
+	cd backend && make test
 
 serve:          ## Serves the project
 	cd backend && make run

@@ -1,17 +1,15 @@
 import logging
 import threading
-import json
-import time
-import psutil
 import os
-
-from multiprocessing import Process, Event
-from sse.manager import start_sse
+import sys
 
 from flask import Flask, request, jsonify, Response,send_from_directory
 from flask_cors import CORS
-from sse.routes import setup_sse_listen, notify_subscribers, stream
-import socket
+
+# -- local imports
+from app.utils import get_ip, get_process_metrics
+from app.sse.routes import setup_sse_listen, notify_subscribers, stream
+
 
 # -------------------------------------------------- Global vars
 
@@ -31,40 +29,11 @@ logging.getLogger("werkzeug").setLevel(logging.ERROR)
 # Check if the docs_dir exists
 if not os.path.exists(docs_dir):
     logger.error(f"Directory does not exist: {docs_dir}")
-    abort(404, description="Resource not found")
-print(f" * Great, found presentation under: {docs_dir}")
+    sys.exit(1)
+else:
+    # abort(404, description="Resource not found")
+    print(f" * Great, found presentation under: {docs_dir}")
 
-def get_ip():
-    """
-        Get the IP address of the current machine    
-    """
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    s.settimeout(0)
-    try:
-        # doesn't even have to be reachable
-        s.connect(('10.254.254.254', 1))
-        IP = s.getsockname()[0]
-    except Exception:
-        IP = '127.0.0.1'
-    finally:
-        s.close()
-    return IP
-
-# --- SSE setup
-
-def get_process_metrics(pid):
-    """Get CPU and memory usage of a process given its PID."""
-    logger.info(f"Getting metrics for process with PID: {pid}")
-    try:
-        process = psutil.Process(pid)
-        cpu_usage = process.cpu_percent(interval=1.0)
-        memory_usage = process.memory_info().rss / (1024 * 1024)  # MB
-        return {
-            "cpu_usage": f"cpu_usage: {cpu_usage:.2f} %",
-            "memory_usage": f"{memory_usage:.2f} MB",
-        }
-    except psutil.NoSuchProcess:
-        return {"error": f"Process {pid} does not exist"}
 
 # --- Flask and SSE setup
 app = Flask(__name__)
@@ -268,20 +237,5 @@ def log_request_info():
     client_ip = request.headers.get('X-Forwarded-For', request.remote_addr)
     logger.info(f"Request [{request.method}] {request.url} from {client_ip}")
 
-# --------------------------------------------------- Main
 
-if __name__ == '__main__':
-    # --- start the SSE server
-    if os.environ.get("WERKZEUG_RUN_MAIN") == "true":
-        logging.warning(f"serve in LAN http://{get_ip()}:{socketNr}")
-        # process event to synchronize server startups, wait for SSE server to be ready
-        logger.warning("We run under Werkzeug, so we are in the reloaded subprocess")
-        sse_ready_event = Event()
-        sse_process = Process(target=start_sse, daemon=True, args=(sse_ready_event,))
-        sse_process.start()
-        global_pid = sse_process.pid  # Store PID in the global variable
-        logging.info(f"SSE -- Started SSE server process with PID: {global_pid}")
-        sse_ready_event.wait() # wait for the server to be ready
-        logger.warning("Starting Flask app")
-    # Start the Flask application in a separate thread
-    app.run(host='0.0.0.0', port=socketNr, threaded=True, debug=True)
+

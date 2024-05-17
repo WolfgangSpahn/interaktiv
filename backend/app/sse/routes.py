@@ -1,7 +1,7 @@
 import flask
 import json
-from sse.manager import SSEManager
-from sse.announcer import format_sse
+from .manager import SSEManager
+from .announcer import format_sse
 
 
 import logging

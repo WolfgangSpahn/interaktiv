@@ -22,10 +22,15 @@ docs/
 
 # Dependency directories
 node_modules/
-
 # Output directories
 dist/
 build/
 
 ## -------------------------------------------------------- Python backend
+# virtualenv
 /backend/.venv/
+# testing
+/backend/.pytest_cache
+# cache, bytecode, etc
+__pycache__/
+*.py[cod]

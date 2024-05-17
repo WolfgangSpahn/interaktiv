@@ -1,11 +1,13 @@
 # system python interpreter. used only to create virtual environment
 PY = python3
 BIN=.venv/bin
+RM = rm -rf
 
 # make it work on windows too
 ifeq ($(OS), Windows_NT)
     BIN=.venv/Scripts
     PY=python
+	RM = rmdir /s /q
 endif
 
 help:      ## Show this help.
@@ -29,21 +31,16 @@ lint:      ## run flake8
 lint: .venv
 	$(BIN)/flake8
 
-.PHONY: release
-release:   ## release package to PyPI
-release: .venv
-	$(BIN)/python setup.py sdist bdist_wheel
-	$(BIN)/twine upload dist/*
-
 
 .PHONY: run
 run:       ## runs entry point
 run: .venv
-	$(BIN)/python interaktiv_server/server.py
+	$(BIN)/python main.py
 
 clean:     ## clean up
-	rm -rf .venv
-	rm -rf interaktiv_server.egg-info 
-	find . -type f -name '*~' -delete
-	find . -type f -name '*.pyc' -delete
-	find . -type d -name '__pycache__' -delete
+clean:
+	-@rm -r interaktiv_server.egg-info
+	-@ $(RM) -r .venv
+	-@find . -type f -name '*~' -delete
+	-@find . -type f -name '*.pyc' -delete
+	-@find . -type d -name '__pycache__' -delete
